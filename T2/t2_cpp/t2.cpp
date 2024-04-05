@@ -2,6 +2,11 @@
 #include <array>
 #include <iostream>
 #include <numeric>
+#ifndef LOCAL
+#define cerr                                                                             \
+    if (0)                                                                               \
+    cerr
+#endif
 using namespace std;
 template <int N, int M>
 class Board {
