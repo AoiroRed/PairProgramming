@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <numeric>
 using namespace std;
 template <int N, int M>
 class Board {
@@ -35,8 +36,11 @@ public:
             score[turn] += b[N - i - 1] + 1;
             a[i] = b[N - i - 1] = 0;
         }
-        end = all_of(a.begin(), a.end(), [](int x) { return x == 0; }) ||
-              all_of(b.begin(), b.end(), [](int x) { return x == 0; });
+        if (end = all_of(a.begin(), a.end(), [](int x) { return x == 0; }) ||
+                  all_of(b.begin(), b.end(), [](int x) { return x == 0; })) {
+            score[turn] += accumulate(a.begin(), a.end(), 0);
+            score[turn ^ 1] += accumulate(b.begin(), b.end(), 0);
+        }
         if (i != N) {
             turn ^= 1;
             swap(a, b);
@@ -55,6 +59,11 @@ int _mancala_result(int flag, int seq[], int n) {
         if (board.err)
             return 30000 + i;
     }
+    cerr << board.score[0] << " " << board.score[1] << endl;
+    for (int i = 0; i < 6; i++) {
+        cerr << board.a[i] << " " << board.b[i] << endl;
+    }
+    cerr << board.turn + 1 << endl;
     if (board.end) {
         return 15000 + board.score[0] - board.score[1];
     } else {
