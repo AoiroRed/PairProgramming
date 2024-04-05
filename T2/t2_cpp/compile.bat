@@ -1,1 +1,1 @@
-emcc -sWASM=1 -sEXPORTED_FUNCTIONS="[_bocchi_shut_up, _malloc]" .\T2.cpp -o T2.cjs -s MODULARIZE -s EXPORT_NAME=createMyModule
+emcc -sWASM=1 -sEXPORTED_FUNCTIONS="[_mancala_result, _malloc]" .\T2.cpp -o T2.cjs -s MODULARIZE -s EXPORT_NAME=createMyModule
