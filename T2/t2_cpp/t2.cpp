@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 template <int N, int M>
 class Board {
@@ -13,9 +14,9 @@ public:
             a[i] = b[i] = M;
     }
     void move(int loc) {
-        loc -= turn * 10;
+        loc -= turn * 10 + 11;
         if (loc < 0 || loc >= N || a[loc] == 0) {
-            raise(30000);
+            throw(30000);
         }
         int cnt = a[loc];
         a[loc] = 0;
@@ -70,4 +71,12 @@ int mancala_result(int flag, int seq[], int n) {
 }
 
 int main() {
+    int flag, n;
+    cin >> flag >> n;
+    int seq[n];
+    for (int i = 0; i < n; i++) {
+        cin >> seq[i];
+    }
+    cout << mancala_result(flag, seq, n) << endl;
+    return 0;
 }
