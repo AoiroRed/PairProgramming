@@ -1,6 +1,6 @@
+#include <algorithm>
 #include <array>
 #include <iostream>
-#include <algorithm>
 using namespace std;
 template <int N, int M>
 class Board {
@@ -8,28 +8,28 @@ public:
     array<int, N> a, b;
     int turn;
     int score[2];
-    int end;
-    Board(int turn) : turn(turn), score{0, 0}, end(0) {
+    bool end, err;
+    Board(int turn) : turn(turn), score{0, 0}, end(false), err(false) {
         for (int i = 0; i < N; i++)
             a[i] = b[i] = M;
     }
     void move(int loc) {
         loc -= turn * 10 + 11;
         if (loc < 0 || loc >= N || a[loc] == 0) {
-            throw(30000);
+            err = true;
+            return;
         }
         int cnt = a[loc];
         a[loc] = 0;
         int i = loc;
         while (cnt--) {
             i = (i + 1) % (2 * N + 1);
-            if (i < N) {
+            if (i < N)
                 a[i]++;
-            } else if (i == N) {
+            else if (i == N)
                 score[turn] += 1;
-            } else {
+            else
                 b[i - N - 1]++;
-            }
         }
         if (i < N && a[i] == 1) {
             score[turn] += b[i] + 1;
@@ -51,11 +51,9 @@ public:
 int _mancala_result(int flag, int seq[], int n) {
     Board board = Board<6, 4>(flag - 1);
     for (int i = 0; i < n; i++) {
-        try {
-            board.move(seq[i]);
-        } catch (int e) {
+        board.move(seq[i]);
+        if (board.err)
             return 30000 + i;
-        }
     }
     if (board.end) {
         return 15000 + board.score[0] - board.score[1];
