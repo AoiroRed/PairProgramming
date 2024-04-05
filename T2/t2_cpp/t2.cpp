@@ -13,6 +13,7 @@ public:
             a[i] = b[i] = M;
     }
     void move(int loc) {
+        loc -= turn * 10;
         if (loc < 0 || loc >= N || a[loc] == 0) {
             raise(30000);
         }
