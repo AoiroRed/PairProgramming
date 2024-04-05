@@ -31,9 +31,9 @@ public:
             else
                 b[i - N - 1]++;
         }
-        if (i < N && a[i] == 1) {
-            score[turn] += b[i] + 1;
-            a[i] = b[i] = 0;
+        if (i < N && a[i] == 1 && b[N - i - 1] > 0) {
+            score[turn] += b[N - i - 1] + 1;
+            a[i] = b[N - i - 1] = 0;
         }
         end = all_of(a.begin(), a.end(), [](int x) { return x == 0; }) ||
               all_of(b.begin(), b.end(), [](int x) { return x == 0; });
