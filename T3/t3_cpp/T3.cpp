@@ -45,6 +45,7 @@ public:
                   all_of(oppo.begin(), oppo.end(), [](int x) { return x == 0; })) {
             score[turn] += accumulate(cur.begin(), cur.end(), 0);
             score[turn ^ 1] += accumulate(oppo.begin(), oppo.end(), 0);
+            cur.fill(0), oppo.fill(0);
         }
         if (i != N) {
             turn ^= 1;
@@ -62,7 +63,7 @@ int *_mancala_board(int flag, int seq[], int n) {
         board.err = true;
     board.move(seq[n - 1]);
     if (board.end)
-        dat = 200 + board.score[1] - board.score[0];
+        dat = 200 + board.score[0] - board.score[1];
     else if (board.err)
         dat = 200 + (flag == 1 ? 2 * board.score[0] - 48 : 48 - 2 * board.score[1]);
     else
