@@ -41,8 +41,9 @@ public:
             score[turn] += oppo[N - i - 1] + 1;
             cur[i] = oppo[N - i - 1] = 0;
         }
-        if (end = all_of(cur.begin(), cur.end(), [](int x) { return x == 0; }) ||
-                  all_of(oppo.begin(), oppo.end(), [](int x) { return x == 0; })) {
+        end = all_of(cur.begin(), cur.end(), [](int x) { return x == 0; }) ||
+              all_of(oppo.begin(), oppo.end(), [](int x) { return x == 0; });
+        if (end) {
             score[turn] += accumulate(cur.begin(), cur.end(), 0);
             score[turn ^ 1] += accumulate(oppo.begin(), oppo.end(), 0);
             cur.fill(0), oppo.fill(0);
