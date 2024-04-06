@@ -70,7 +70,7 @@ int *_mancala_board(int flag, int seq[], int n) {
     else if (board.err)
         dat = 200 + (flag == 1 ? 2 * board.score[0] - 48 : 48 - 2 * board.score[1]);
     else
-        dat = board.turn;
+        dat = board.turn + 1;
     int *b = new int[15];
     if (board.turn)
         swap(board.cur, board.oppo);
