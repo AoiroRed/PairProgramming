@@ -52,12 +52,33 @@ public:
         }
     }
 };
-unsigned long long _mancala_board(int flag, int seq[], int n) {
+
+int *_mancala_board(int flag, int seq[], int n) {
     Board board = Board<6, 4>(seq[0] / 10 - 1);
+    for (int i = 0; i < n - 1; i++)
+        board.move(seq[i]);
+    int dat;
+    if (board.turn != flag - 1)
+        board.err = true;
+    board.move(seq[n - 1]);
+    if (board.end)
+        dat = 200 + board.score[1] - board.score[0];
+    else if (board.err)
+        dat = 200 + (flag == 1 ? 2 * board.score[0] - 48 : 48 - 2 * board.score[1]);
+    else
+        dat = board.turn;
+    int *b = new int[15];
+    if (board.turn)
+        swap(board.cur, board.oppo);
+    for (int i = 0; i < 6; i++)
+        b[i] = board.cur[i], b[i + 7] = board.oppo[i];
+    b[6] = board.score[0], b[13] = board.score[1];
+    b[14] = dat;
+    return b;
 }
 
 extern "C" {
-unsigned long long mancala_board(int flag, int seq[], int n) {
+int *mancala_board(int flag, int seq[], int n) {
     return _mancala_board(flag, seq, n);
 }
 }
@@ -66,9 +87,10 @@ int main() {
     int flag, n;
     cin >> flag >> n;
     int seq[n];
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
         cin >> seq[i];
-    }
-    cout << mancala_board(flag, seq, n) << endl;
+    auto b = mancala_board(flag, seq, n);
+    for (int i = 0; i < 15; i++)
+        cout << b[i] << " ";
     return 0;
 }
