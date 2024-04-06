@@ -1,1 +1,1 @@
-emcc -sWASM=1 -sEXPORTED_FUNCTIONS="[_mancala_board, _malloc]" .\T3.cpp -o T3.cjs -s MODULARIZE -s EXPORT_NAME=createMyModule
+emcc -sWASM=1 -sEXPORTED_FUNCTIONS="[_mancala_board, _malloc]" .\T3.cpp -o T3.cjs -s MODULARIZE -s EXPORT_NAME=createMyModule -sEXPORTED_RUNTIME_METHODS=getValue

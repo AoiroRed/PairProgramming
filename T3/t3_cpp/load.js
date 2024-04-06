@@ -1,13 +1,18 @@
 import m from './T3.cjs'
 
-var _mancala_result, _malloc, HEAP32
+var _mancala_board, _malloc, HEAP32, getValue
 await m().then(m => {
-    _mancala_result = m._mancala_result,
-        _malloc = m._malloc, HEAP32 = m.HEAP32
+    _mancala_board = m._mancala_board,
+        _malloc = m._malloc, HEAP32 = m.HEAP32, getValue = m.getValue
 });
 
-export function mancalaResult(k, a, n) {
+export function mancalaBoard(k, a, n) {
     const p = _malloc(a.length * 4);
     HEAP32.set(new Int32Array(a), p >> 2);
-    return _mancala_result(k, p, n);
+    var offset = _mancala_board(k, p, n);
+    var result = [];
+    for (var i = 0; i < 15; i++) {
+        result[i] = getValue(offset + i * 4, 'i32');
+    }
+    return result;
 }
