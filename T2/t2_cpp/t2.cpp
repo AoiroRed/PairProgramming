@@ -21,7 +21,7 @@ public:
     }
     void move(int loc) {
         loc -= turn * 10 + 11;
-        if (loc < 0 || loc >= N || cur[loc] == 0) {
+        if (loc < 0 || loc >= N || cur[loc] == 0 || end) {
             err = true;
             return;
         }
