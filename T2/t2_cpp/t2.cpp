@@ -70,9 +70,9 @@ int _mancala_result(int flag, int seq[], int n) {
     }
     cerr << board.turn + 1 << endl;
     if (board.end) {
-        return 15000 + board.score[0] - board.score[1];
+        return 15000 + board.score[flag - 1] - board.score[2 - flag];
     } else {
-        return 20000 + board.score[0];
+        return 20000 + board.score[flag - 1];
     }
 }
 
