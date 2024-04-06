@@ -11,44 +11,44 @@ using namespace std;
 template <int N, int M>
 class Board {
 public:
-    array<int, N> a, b;
+    array<int, N> cur, oppo;
     int turn;
     int score[2];
     bool end, err;
     Board(int turn) : turn(turn), score{0, 0}, end(false), err(false) {
         for (int i = 0; i < N; i++)
-            a[i] = b[i] = M;
+            cur[i] = oppo[i] = M;
     }
     void move(int loc) {
         loc -= turn * 10 + 11;
-        if (loc < 0 || loc >= N || a[loc] == 0) {
+        if (loc < 0 || loc >= N || cur[loc] == 0) {
             err = true;
             return;
         }
-        int cnt = a[loc];
-        a[loc] = 0;
+        int cnt = cur[loc];
+        cur[loc] = 0;
         int i = loc;
         while (cnt--) {
             i = (i + 1) % (2 * N + 1);
             if (i < N)
-                a[i]++;
+                cur[i]++;
             else if (i == N)
                 score[turn] += 1;
             else
-                b[i - N - 1]++;
+                oppo[i - N - 1]++;
         }
-        if (i < N && a[i] == 1 && b[N - i - 1] > 0) {
-            score[turn] += b[N - i - 1] + 1;
-            a[i] = b[N - i - 1] = 0;
+        if (i < N && cur[i] == 1 && oppo[N - i - 1] > 0) {
+            score[turn] += oppo[N - i - 1] + 1;
+            cur[i] = oppo[N - i - 1] = 0;
         }
-        if (end = all_of(a.begin(), a.end(), [](int x) { return x == 0; }) ||
-                  all_of(b.begin(), b.end(), [](int x) { return x == 0; })) {
-            score[turn] += accumulate(a.begin(), a.end(), 0);
-            score[turn ^ 1] += accumulate(b.begin(), b.end(), 0);
+        if (end = all_of(cur.begin(), cur.end(), [](int x) { return x == 0; }) ||
+                  all_of(oppo.begin(), oppo.end(), [](int x) { return x == 0; })) {
+            score[turn] += accumulate(cur.begin(), cur.end(), 0);
+            score[turn ^ 1] += accumulate(oppo.begin(), oppo.end(), 0);
         }
         if (i != N) {
             turn ^= 1;
-            swap(a, b);
+            swap(cur, oppo);
         }
     }
 };
@@ -66,7 +66,7 @@ int _mancala_result(int flag, int seq[], int n) {
     }
     cerr << board.score[0] << " " << board.score[1] << endl;
     for (int i = 0; i < 6; i++) {
-        cerr << board.a[i] << " " << board.b[i] << endl;
+        cerr << board.cur[i] << " " << board.oppo[i] << endl;
     }
     cerr << board.turn + 1 << endl;
     if (board.end) {
