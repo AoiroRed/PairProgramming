@@ -10,14 +10,14 @@ import { mancalaOperator as op1 } from "./t3_cpp/release/load.js";
 // import { mancalaOperator as op2 } from "./t3-2-as-rival/build/release.js";
 // import { mancala_operator as op2 } from "./t3_2_rust_rival/pkg/t3_2_rust.js"
 // [Write your own "import" for other PLs.]
-import { mancala_operator as op2 } from "./t3_toby/package/kalah.js";
+import { mancalaOperator as op2 } from "./others/t3-2-as-rival/build/release.js"
+
 
 // Choose proper "import" depending on your PL.
 // import { mancalaBoard as board } from "./t3-1-as/build/release.js";
 // import { mancala_board as board } from "./t3_1_rust/pkg/t3_1_rust.js"
 // [Write your own "import" for other PLs.]
 import { mancalaBoard as board } from "./t3_cpp/release/load.js";
-// import { mancala_board as board } from "./t3_toby/package/kalah.js";
 
 
 let operator, status, operation, operationSequence, boardReturn, isEnded;
