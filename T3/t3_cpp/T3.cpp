@@ -2,14 +2,17 @@
 #include <array>
 #include <iostream>
 #include <numeric>
+#include <unordered_map>
 #include <vector>
 #ifndef LOCAL
 #define cerr                                                                             \
     if (0)                                                                               \
     cerr
 #endif
-namespace board {
 using namespace std;
+using ll = long long;
+const int MAX_DEPTH = 10;
+namespace board {
 template <int N, int M>
 class Board {
 public:
@@ -87,8 +90,6 @@ int *mancala_board(int flag, int seq[], int n) {
 }
 } // namespace board
 namespace op {
-using namespace std;
-using ll = long long;
 const int inf = 0x3f3f3f3f;
 const int hole = 6, seed = 4;
 template <int N, int M>
@@ -117,9 +118,9 @@ public:
         if (loc < N && cur[loc] == 1 && oppo[N - loc - 1] > 0) {
             score[turn] += oppo[N - loc - 1] + 1;
             cur[loc] = oppo[N - loc - 1] = 0;
+            end |= all_of(oppo.begin(), oppo.end(), [](int x) { return x == 0; });
         }
-        end = all_of(cur.begin(), cur.end(), [](int x) { return x == 0; }) ||
-              all_of(oppo.begin(), oppo.end(), [](int x) { return x == 0; });
+        end |= all_of(cur.begin(), cur.end(), [](int x) { return x == 0; });
         if (end) {
             score[turn] += accumulate(cur.begin(), cur.end(), 0);
             score[turn ^ 1] += accumulate(oppo.begin(), oppo.end(), 0);
@@ -146,17 +147,22 @@ public:
         return seed;
     }
 };
-int evaluate(const Board<hole, seed> &board, int reps) { // TODO
-    if (board.end)
-        return board.score[0] - board.score[1];
-    // turn == 0 if max_depth is even
+int cur_score;
+// turn == 0 if max_depth is even
+int evaluate(const Board<hole, seed> &board, int reps) {
+    if (board.end) {
+        int score = board.score[0] - board.score[1];
+        return (cur_score > 0 ? 20 : 5) * (score);
+    }
     int score = 10 * (board.score[0] - board.score[1]);
-    score += reps;
-    score += 5 * (board.cur[5] == 0);
+    score += reps * 2;
+    auto &cur = MAX_DEPTH & 1 ? board.oppo : board.cur;
+    score += 5 * (cur[5] == 0);
+    score += 3 * (!!cur[1] + !!cur[2] + !!cur[3] > 1);
     return score;
 }
 int alpha_beta(const Board<hole, seed> &board, int alpha, int beta, bool is_max = true,
-               int max_depth = 8, int rep = 0, bool top = true) {
+               int max_depth = MAX_DEPTH, int rep = 0, bool top = true) {
     if (max_depth == 0 || board.end)
         return evaluate(board, rep);
     int score = is_max ? -inf : inf;
@@ -202,13 +208,17 @@ int alpha_beta(const Board<hole, seed> &board, int alpha, int beta, bool is_max 
     }
     return top ? best : score;
 }
+unordered_map<Board<hole, seed>, int, MyHash> mp;
+Board<hole, seed> board = Board<hole, seed>(0);
 int _mancala_operator(int flag, int status[]) {
-    Board<hole, seed> board = Board<hole, seed>(0);
     for (int i = 0; i < hole; i++)
         if (flag == 1)
             board.cur[i] = status[i], board.oppo[i] = status[hole + 1 + i];
         else
             board.cur[i] = status[hole + 1 + i], board.oppo[i] = status[i];
+    if (mp.count(board))
+        return mp[board] + flag * 10 + 1;
+    cur_score = (flag == 1 ? 1 : -1) * (status[hole] - status[2 * hole + 1]);
     return alpha_beta(board, -inf, inf) + flag * 10 + 1;
 }
 extern "C" {
@@ -216,16 +226,40 @@ int mancala_operator(int flag, int status[]) {
     return _mancala_operator(flag, status);
 }
 }
+void memorize(vector<int> &&pre, vector<int> &&op) {
+    Board<hole, seed> b = Board<hole, seed>(0);
+    for (auto &i : pre)
+        b.move(i);
+    for (auto &i : op) {
+        mp[b] = i;
+        b.move(i);
+    }
+}
+auto init = []() -> int {
+    memorize({}, {2, 5, 1, 0}); // 2, 5, 1, 0, 1, 4, 5, 4, 3, 5, 0, 5, 4
+    memorize({5}, {1});
+    memorize({2, 5, 5}, {1, 5, 3});
+    memorize({2, 5, 4}, {1, 5, 3});
+    memorize({2, 5, 3}, {1, 5, 0});
+    return 0;
+}();
 } // namespace op
 
 int main() {
-    int flag, n;
-    std::cin >> flag >> n;
-    int seq[n];
-    for (int i = 0; i < n; i++)
-        std::cin >> seq[i];
-    auto b = board::mancala_board(flag, seq, n);
-    for (int i = 0; i < 15; i++)
-        std::cout << b[i] << " ";
+    int n;
+    cin >> n;
+    op::Board<op::hole, op::seed> board = op::Board<op::hole, op::seed>(0);
+    for (int i = 0; i < n; i++) {
+        int x;
+        cin >> x;
+        board.move(x);
+    }
+    int *b = new int[14];
+    if (board.turn)
+        swap(board.cur, board.oppo);
+    for (int i = 0; i < 6; i++)
+        b[i] = board.cur[i], b[i + 7] = board.oppo[i];
+    b[6] = board.score[0], b[13] = board.score[1];
+    cout << op::_mancala_operator(board.turn + 1, b) - board.turn * 10 - 11 << endl;
     return 0;
 }
