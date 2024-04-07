@@ -152,7 +152,7 @@ int cur_score;
 int evaluate(const Board<hole, seed> &board, int reps) {
     if (board.end) {
         int score = board.score[0] - board.score[1];
-        return (cur_score > 0 ? 20 : 5) * (score);
+        return (cur_score > 0 ? 20 : 10) * (score);
     }
     int score = 10 * (board.score[0] - board.score[1]);
     score += reps * 2;
